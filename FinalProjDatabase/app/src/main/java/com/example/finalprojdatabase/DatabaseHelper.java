@@ -10,6 +10,7 @@ import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper
 {
+    //less typing if I do this.
     private static final String DB_NAME = DatabaseInfo.getDbName();
     private static final String TABLE_USERS = DatabaseInfo.getTableNameUsers();
     private static final String TABLE_CARDS = DatabaseInfo.getTableNameCards();
@@ -177,7 +178,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
         Cursor cursor = db.rawQuery(checkUsername, null);
         //move cursor to the first thing because there should only be one thing returned.
         cursor.moveToFirst();
-        //give getnInt 0 for the first thing that is returned.  This should always return one thing because I am using the count function in sql
+        //give getInt 0 for the first thing that is returned.  This should always return one thing because I am using the count function in sql
+        //using getInt because count will return an int.
         int count = cursor.getInt(0);
 
         db.close();
@@ -218,6 +220,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
                     goodUsernamePassword = false;
                 }
             }
+
+            db.close();
         }
         else
         {
@@ -226,8 +230,63 @@ public class DatabaseHelper extends SQLiteOpenHelper
         }
 
 
-
         return goodUsernamePassword;
 
+    }
+
+    public int getNumberOfCardsForUser()
+    {
+        //The select statement needs to look like this:
+        //select count(cardID)
+        //from users
+        //inner join users on cards.username = users.username
+        //where cards.username = 'sthomas';
+        //sthomas needs to be the user that is currently logged in.  We are keeping track of who is logged in, in the AppData class
+        //need to count cardId because I know that is a unique field for all cards.
+        String selectStatement = "Select count(cardId) from " + TABLE_USERS + " inner join " + TABLE_CARDS + " on " + TABLE_CARDS + ".username = " + TABLE_USERS + ".username where " + TABLE_CARDS + ".username = '" + AppData.getUsername() + "';";
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(selectStatement, null);
+        //initial value that is impossible (no user can have -999 cards)
+        int numCards = -999;
+
+        if(cursor != null)
+        {
+            cursor.moveToFirst();
+            //give getInt 0 for the first thing that is returned.  This should always return one thing because I am using the count function in sql
+            //using getInt because count will return an int.
+            numCards = cursor.getInt(0);
+
+        }
+        else
+        {
+            numCards = 0;
+            Log.d("ERROR: ", "There are not cards entered for the user " + AppData.getUsername());
+        }
+
+        db.close();
+        return numCards;
+    }
+
+    public String getFirstnameForUser()
+    {
+        String selectStatement = "Select fname from " + TABLE_USERS + " where username = '" + AppData.getUsername() + "';";
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(selectStatement, null);
+        String firstname = "";
+        if(cursor != null)
+        {
+            cursor.moveToFirst();
+            firstname = cursor.getString(0).toString();
+
+        }
+        else
+        {
+            Log.d("ERROR: ", "no first name found for the user " + AppData.getUsername());
+        }
+
+        db.close();
+        return firstname;
     }
 }
