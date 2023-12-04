@@ -1,19 +1,21 @@
 package com.example.finalprojdatabase;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper
 {
-    private static final String DB_NAME = "FinanceDb.db";
-    private static final String TABLE_USERS = "Users";
-    private static final String TABLE_CARDS = "Cards";
-    private static final String TABLE_CATEGORY = "Category";
-    private static final String TABLE_LOCATION = "Location";
-    private static final String TABLE_TRANSACTIONS = "Transactions";
+    private static final String DB_NAME = DatabaseInfo.getDbName();
+    private static final String TABLE_USERS = DatabaseInfo.getTableNameUsers();
+    private static final String TABLE_CARDS = DatabaseInfo.getTableNameCards();
+    private static final String TABLE_CATEGORY = DatabaseInfo.getTableNameCategory();
+    private static final String TABLE_LOCATION = DatabaseInfo.getTableNameLocation();
+    private static final String TABLE_TRANSACTIONS = DatabaseInfo.getTableNameTransactions();
 
     public DatabaseHelper(Context context)
     {
@@ -166,5 +168,66 @@ public class DatabaseHelper extends SQLiteOpenHelper
         db.close();
 
         return numRows;
+    }
+    public boolean usernameExists(String username)
+    {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String checkUsername = "Select count(username) from " + TABLE_USERS + " where username = '" + username + "';";
+        Cursor cursor = db.rawQuery(checkUsername, null);
+        //move cursor to the first thing because there should only be one thing returned.
+        cursor.moveToFirst();
+        //give getnInt 0 for the first thing that is returned.  This should always return one thing because I am using the count function in sql
+        int count = cursor.getInt(0);
+
+        db.close();
+
+        if(count != 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public boolean validUsernamePasswordCombo(String username, String password)
+    {
+        boolean goodUsernamePassword = false;
+        if(usernameExists(username))
+        {
+            String getUserInfo = "Select password from " + TABLE_USERS + " WHERE username = '" + username + "';";
+
+            SQLiteDatabase db = this.getReadableDatabase();
+
+            Cursor cursor = db.rawQuery(getUserInfo, null);
+
+            if(cursor != null)
+            {
+                cursor.moveToFirst();
+
+                //no need for a loop.  Should only be one thing returned to us
+                //we do not need to use getcolumindex because this should only return us one column because we are selecting password only in our query
+                if(password.equals(cursor.getString(0).toString()))
+                {
+                    goodUsernamePassword = true;
+                }
+                else
+                {
+                    Log.d("BAD PASSWORD: ", "the password entered is not the correct password for that username");
+                    goodUsernamePassword = false;
+                }
+            }
+        }
+        else
+        {
+            Log.d("BAD USERNAME: ", "the username entered was not found in the db");
+            goodUsernamePassword = false;
+        }
+
+
+
+        return goodUsernamePassword;
+
     }
 }

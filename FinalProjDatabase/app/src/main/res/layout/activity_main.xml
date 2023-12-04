@@ -4,15 +4,73 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".Login">
 
-    <TextView
+    <Button
+        android:id="@+id/btn_login_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="53dp"
+        android:text="Login"
+        app:layout_constraintEnd_toEndOf="@+id/txt_login_errorMsg"
+        app:layout_constraintStart_toStartOf="@+id/txt_login_errorMsg"
+        app:layout_constraintTop_toBottomOf="@+id/txt_login_errorMsg" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="54dp"
+        android:layout_marginBottom="10dp"
+        android:text="Username"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/et_login_username"
+        app:layout_constraintStart_toStartOf="@+id/et_login_username" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="56dp"
+        android:layout_marginBottom="15dp"
+        android:text="Password"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/et_login_password"
+        app:layout_constraintStart_toStartOf="@+id/et_login_password" />
+
+    <EditText
+        android:id="@+id/et_login_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="174dp"
+        android:ems="10"
+        android:inputType="text"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="@+id/et_login_password"
+        app:layout_constraintStart_toStartOf="@+id/et_login_password"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <EditText
+        android:id="@+id/et_login_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="75dp"
+        android:layout_marginTop="65dp"
+        android:ems="10"
+        android:inputType="textPassword"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_login_username" />
+
+    <TextView
+        android:id="@+id/txt_login_errorMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="21dp"
+        android:text="Invalid Username or Password"
+        android:textColor="@color/design_default_color_error"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/et_login_password"
+        app:layout_constraintTop_toBottomOf="@+id/et_login_password" />
 </androidx.constraintlayout.widget.ConstraintLayout>
